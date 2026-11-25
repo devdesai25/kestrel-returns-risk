@@ -19,6 +19,12 @@ pytest -q
 python -m src.serve      # http://0.0.0.0:8000/  (no data pack required)
 ```
 
+### Windows, no setup
+
+Double-click `start-windows.cmd`. It builds the virtual environment on first run (Python 3.10+),
+then serves on <http://127.0.0.1:8020>. The maths libraries are pinned single-threaded in that
+script because multi-threaded OpenBLAS aborts at import on Windows.
+
 `models/model.joblib` is committed so `python -m src.serve` works with no training step and
 **no data pack on disk**: `/`, `/health`, `/sample`, and `/score` all run from the model
 bundle plus `web/sample_order.json`. Holdout numbers in `reports/` come from a model trained
@@ -46,7 +52,10 @@ random split):
 | HistGradientBoosting (depth 3) | Tree competitor; close but behind on this split |
 | Single decision tree | Illustration of rules only - not the deliverable |
 
-Exact numbers are in `reports/metrics.json` and `reports/eval_report.md`.
+Exact numbers are in `reports/metrics.json` and `reports/eval_report.md`. Every alternative that
+was fitted and rejected (CatBoost, note-text encodings, per-order thresholds, model blending,
+interactions) is recorded with its holdout numbers in `reports/alternatives_tested.md`, and the
+scorecard metrics are explained in plain language in `docs/metrics_explained.md`.
 
 ## Data
 
