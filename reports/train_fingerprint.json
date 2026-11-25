@@ -1,0 +1,112 @@
+{
+  "model_version": "logit-v1",
+  "model_family": "logistic_regression",
+  "n_train": 10504,
+  "feature_columns": [
+    "hour",
+    "dow",
+    "month",
+    "log_value",
+    "value",
+    "discount_pct",
+    "qty",
+    "promised_delivery_days",
+    "customer_prior_orders",
+    "customer_prior_returns",
+    "prior_ret_rate",
+    "pin_missing",
+    "note_missing",
+    "cust_since_days",
+    "price_ratio",
+    "warranty_months",
+    "sales_channel",
+    "payment_mode",
+    "is_gift",
+    "family",
+    "state",
+    "shield_member"
+  ],
+  "references": {
+    "hour": 11.0,
+    "dow": 3.0,
+    "month": 6.0,
+    "log_value": 8.398549285317204,
+    "value": 4439.62,
+    "discount_pct": 8.0,
+    "qty": 1.0,
+    "promised_delivery_days": 5.0,
+    "customer_prior_orders": 1.0,
+    "customer_prior_returns": 0.0,
+    "prior_ret_rate": 0.0,
+    "pin_missing": 0.0,
+    "note_missing": 0.0,
+    "cust_since_days": 428.0,
+    "price_ratio": 0.9199999999999999,
+    "warranty_months": 12.0,
+    "sales_channel": "app",
+    "payment_mode": "prepaid_upi",
+    "is_gift": "N",
+    "family": "Robot Vacuum",
+    "state": "MH",
+    "shield_member": "N"
+  },
+  "rate_lookup": {
+    "overall": 0.11424219345011424,
+    "n": 10504,
+    "family": {
+      "Air Fryer": 0.12005277044854881,
+      "Ceiling Fan": 0.06662312214239059,
+      "Induction Cooktop": 0.08265582655826559,
+      "Mixer Grinder": 0.06753962784286699,
+      "Robot Vacuum": 0.19498069498069498,
+      "Room Heater": 0.11672131147540983,
+      "Water Purifier": 0.1481736733287388
+    },
+    "state": {
+      "DL": 0.09062003179650238,
+      "KA": 0.1272222222222222,
+      "MH": 0.11865569272976681,
+      "MP": 0.12147887323943662,
+      "RJ": 0.12035541195476575,
+      "TN": 0.08547794117647059,
+      "TS": 0.11461794019933555,
+      "UP": 0.10141987829614604
+    },
+    "sales_channel": {
+      "app": 0.10748185371300949,
+      "marketplace": 0.13558731265249216,
+      "partner_outlet": 0.09090909090909091,
+      "web": 0.11171366594360087
+    },
+    "payment_mode": {
+      "cod": 0.18813451776649745,
+      "emi": 0.09076682316118936,
+      "prepaid_card": 0.08824895494658616,
+      "prepaid_upi": 0.0767661310890079
+    },
+    "shield_member": {
+      "N": 0.09379968203497616,
+      "Y": 0.18607649333906318
+    },
+    "family_rank": {
+      "Robot Vacuum": 1,
+      "Water Purifier": 2,
+      "Air Fryer": 3,
+      "Room Heater": 4,
+      "Induction Cooktop": 5,
+      "Mixer Grinder": 6,
+      "Ceiling Fan": 7
+    }
+  },
+  "positive_rate": 0.11424219345011424,
+  "defaults": {
+    "state": "MH",
+    "city": "UNKNOWN",
+    "shield_member": "N",
+    "family": "UNKNOWN",
+    "list_price_inr": 4439.62,
+    "warranty_months": 12.0
+  },
+  "n_products": 21,
+  "n_customers": 9000
+}

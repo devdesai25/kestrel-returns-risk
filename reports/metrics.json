@@ -1,0 +1,670 @@
+{
+  "holdout_boundary": "2026-04-01",
+  "n_train_split": 8378,
+  "n_valid_split": 2126,
+  "operating_threshold": 0.11180124223602485,
+  "hgb_holdout": {
+    "auc_roc": 0.7621109049680479,
+    "auc_pr": 0.3834014054840814,
+    "brier": 0.08712448520054482,
+    "tp": 157,
+    "fp": 526,
+    "fn": 88,
+    "tn": 1355,
+    "precision": 0.22986822840409957,
+    "recall": 0.6408163265306123,
+    "specificity": 0.7203615098351941,
+    "accuracy": 0.7111947318908749,
+    "flagged": 683,
+    "n": 2126,
+    "return_rate": 0.11523988711194733
+  },
+  "logistic_holdout": {
+    "auc_roc": 0.7894975534073279,
+    "auc_pr": 0.41685256626384737,
+    "brier": 0.08458072444809075,
+    "tp": 169,
+    "fp": 504,
+    "fn": 76,
+    "tn": 1377,
+    "precision": 0.2511144130757801,
+    "recall": 0.689795918367347,
+    "specificity": 0.7320574162679426,
+    "accuracy": 0.7271872060206962,
+    "flagged": 673,
+    "n": 2126,
+    "return_rate": 0.11523988711194733
+  },
+  "model_choice": {
+    "selected": "logistic_regression",
+    "why": "Unweighted logistic regression (one-hot categoricals) beats HistGradientBoosting on holdout AUC (0.7895 vs 0.7621), PR-AUC (0.4169 vs 0.3834), Brier (0.0846 vs 0.0871), and net Rs at p* (37738 vs 32457). No LLM scoring (no API / not reproducible / not defensible). A shallow decision tree is illustration-only.",
+    "hgb_auc_roc": 0.7621109049680479,
+    "hgb_auc_pr": 0.3834014054840814,
+    "hgb_brier": 0.08712448520054482,
+    "hgb_net_inr": 32457.499999999993,
+    "logistic_auc_roc": 0.7894975534073279,
+    "logistic_auc_pr": 0.41685256626384737,
+    "logistic_brier": 0.08458072444809075,
+    "logistic_net_inr": 37737.5
+  },
+  "accuracy_ceiling": {
+    "best_accuracy": 0.8955785512699906,
+    "best_threshold": 0.42859598071819316,
+    "majority_class_accuracy": 0.8847601128880527,
+    "n": 2126,
+    "max_errors_for_95pct": 106,
+    "holdout_returns": 245,
+    "note": "95% accuracy is unreachable; majority baseline already near the ceiling."
+  },
+  "ablation": {
+    "with_leakage": {
+      "auc_roc": 0.9955147609282947,
+      "auc_pr": 0.9833734720128988
+    },
+    "without_leakage": {
+      "auc_roc": 0.7621109049680479,
+      "auc_pr": 0.3834014054840814
+    },
+    "reverse_pickup_n": 750,
+    "reverse_pickup_return_rate": 1.0,
+    "pickup_scheduled_n": 1231,
+    "pickup_scheduled_return_rate": 0.9179528838342811,
+    "note": "last_service_event_type==REVERSE_PICKUP and pickup_scheduled_at are post-return artefacts (ops-policy section 7). Dropped from the feature set."
+  },
+  "economics": {
+    "call_breakeven": 0.11180124223602485,
+    "hold_breakeven_median": 0.05893548622619092,
+    "median_order_value": 4439.62,
+    "model_net": 37737.5,
+    "model_saved": 68022.5,
+    "model_cost": 30285.0,
+    "model_prevented": 59.15,
+    "returns_total": 245,
+    "no_intervention_net": 0.0,
+    "call_every_net": 2942.5,
+    "call_every_cost": 95670.0,
+    "call_every_saved": 98612.5,
+    "call_every_prevented": 85.75,
+    "scaled": {
+      "per_order": 17.750470366886173,
+      "monthly_700": 12425.329256820321,
+      "annual_700": 149103.95108184387
+    },
+    "confusion_at_threshold": {
+      "tp": 169.0,
+      "fp": 504.0,
+      "fn": 76.0,
+      "tn": 1377.0
+    },
+    "hgb_net_for_comparison": 32457.499999999993
+  },
+  "shield_tradeoff": {
+    "intervene_all": {
+      "net": 37737.5,
+      "flagged": 673.0,
+      "tp": 169.0,
+      "prevented": 59.15
+    },
+    "exclude_shield": {
+      "net": 15722.5,
+      "flagged": 393.0,
+      "tp": 83.0,
+      "prevented": 29.049999999999997
+    },
+    "returns_missed_by_excluding_shield": 86.0,
+    "calls_saved_by_excluding_shield": 280.0,
+    "net_delta_excluding_shield": -22015.0,
+    "note": "Excluding Shield misses some preventable returns but avoids calling high-LTV members; hold cancellations would hit them hardest."
+  },
+  "margin_sensitivity": {
+    "0.15": 0.04400642531180769,
+    "0.25": 0.05893548622619092,
+    "0.4": 0.07283418687505297
+  },
+  "margin_pct_assumption": 0.25,
+  "constants": {
+    "C_RETURN": 1150.0,
+    "C_CALL": 45.0,
+    "CALL_PREVENT": 0.35
+  },
+  "wilson": {
+    "precision": [
+      0.21982652861708274,
+      0.28522743101521764
+    ],
+    "recall": [
+      0.6293174178802928,
+      0.744414517468199
+    ]
+  },
+  "stability": {
+    "windows": {
+      "A": {
+        "label": "train < 2025-11-01, validate Nov 2025-Jan 2026",
+        "n_train": 4870,
+        "n_valid": 2101,
+        "returns": 225,
+        "logistic": {
+          "auc_roc": 0.7567922293295428,
+          "auc_pr": 0.3566073332369524
+        },
+        "hgb": {
+          "auc_roc": 0.7361809997630893,
+          "auc_pr": 0.3005715873199397
+        },
+        "winner": "logistic"
+      },
+      "B": {
+        "label": "train < 2026-04-01, validate Apr-Jun 2026",
+        "n_train": 8378,
+        "n_valid": 2126,
+        "returns": 245,
+        "logistic": {
+          "auc_roc": 0.7894975534073279,
+          "auc_pr": 0.41685256626384737
+        },
+        "hgb": {
+          "auc_roc": 0.7621109049680479,
+          "auc_pr": 0.3834014054840814
+        },
+        "winner": "logistic"
+      }
+    },
+    "wins": {
+      "logistic": 2,
+      "hgb": 0
+    },
+    "avg_logistic_auc_pr_mean": 0.5799374205594177,
+    "avg_hgb_auc_pr_mean": 0.5455662243837895,
+    "ranking_holds": true,
+    "selected_still_wins_on_average": true,
+    "comment": "Logistic leads on both windows."
+  },
+  "calibration": {
+    "brier": 0.08458072444809075,
+    "base_rate": 0.11523988711194733,
+    "mean_predicted": 0.11544641752842978,
+    "bins": [
+      {
+        "bin": 1,
+        "lo": 0.0,
+        "hi": 0.1,
+        "n": 1353,
+        "mean_predicted": 0.04710005427970047,
+        "observed_rate": 0.050997782705099776
+      },
+      {
+        "bin": 2,
+        "lo": 0.1,
+        "hi": 0.2,
+        "n": 445,
+        "mean_predicted": 0.14061421989473097,
+        "observed_rate": 0.13258426966292136
+      },
+      {
+        "bin": 3,
+        "lo": 0.2,
+        "hi": 0.30000000000000004,
+        "n": 141,
+        "mean_predicted": 0.2400154268376784,
+        "observed_rate": 0.24822695035460993
+      },
+      {
+        "bin": 4,
+        "lo": 0.30000000000000004,
+        "hi": 0.4,
+        "n": 88,
+        "mean_predicted": 0.34332026917653374,
+        "observed_rate": 0.25
+      },
+      {
+        "bin": 5,
+        "lo": 0.4,
+        "hi": 0.5,
+        "n": 47,
+        "mean_predicted": 0.4487927187533788,
+        "observed_rate": 0.5106382978723404
+      },
+      {
+        "bin": 6,
+        "lo": 0.5,
+        "hi": 0.6000000000000001,
+        "n": 28,
+        "mean_predicted": 0.5418697674141973,
+        "observed_rate": 0.5714285714285714
+      },
+      {
+        "bin": 7,
+        "lo": 0.6000000000000001,
+        "hi": 0.7000000000000001,
+        "n": 8,
+        "mean_predicted": 0.6553314262653125,
+        "observed_rate": 0.75
+      },
+      {
+        "bin": 8,
+        "lo": 0.7000000000000001,
+        "hi": 0.8,
+        "n": 6,
+        "mean_predicted": 0.7670053500316278,
+        "observed_rate": 0.6666666666666666
+      },
+      {
+        "bin": 9,
+        "lo": 0.8,
+        "hi": 0.9,
+        "n": 7,
+        "mean_predicted": 0.8712131412020769,
+        "observed_rate": 1.0
+      },
+      {
+        "bin": 10,
+        "lo": 0.9,
+        "hi": 1.0,
+        "n": 3,
+        "mean_predicted": 0.9587455774903196,
+        "observed_rate": 1.0
+      }
+    ]
+  },
+  "threshold_sweep": [
+    {
+      "threshold": 0.06,
+      "flagged": 1189,
+      "flagged_pct": 0.559266227657573,
+      "precision": 0.18334735071488645,
+      "recall": 0.889795918367347,
+      "accuracy": 0.5305738476011289,
+      "net_inr": 34240.0,
+      "tp": 218,
+      "fp": 971,
+      "fn": 27,
+      "tn": 910
+    },
+    {
+      "threshold": 0.08,
+      "flagged": 943,
+      "flagged_pct": 0.4435559736594544,
+      "precision": 0.20890774125132555,
+      "recall": 0.8040816326530612,
+      "accuracy": 0.6265286923800565,
+      "net_inr": 36857.499999999985,
+      "tp": 197,
+      "fp": 746,
+      "fn": 48,
+      "tn": 1135
+    },
+    {
+      "threshold": 0.1,
+      "flagged": 773,
+      "flagged_pct": 0.3635936030103481,
+      "precision": 0.2276843467011643,
+      "recall": 0.7183673469387755,
+      "accuracy": 0.6867356538099718,
+      "net_inr": 36055.0,
+      "tp": 176,
+      "fp": 597,
+      "fn": 69,
+      "tn": 1284
+    },
+    {
+      "threshold": 0.1118,
+      "flagged": 673,
+      "flagged_pct": 0.3165569143932267,
+      "precision": 0.2511144130757801,
+      "recall": 0.689795918367347,
+      "accuracy": 0.7271872060206962,
+      "net_inr": 37737.5,
+      "tp": 169,
+      "fp": 504,
+      "fn": 76,
+      "tn": 1377
+    },
+    {
+      "threshold": 0.15,
+      "flagged": 490,
+      "flagged_pct": 0.23047977422389465,
+      "precision": 0.29591836734693877,
+      "recall": 0.5918367346938775,
+      "accuracy": 0.79068673565381,
+      "net_inr": 36312.5,
+      "tp": 145,
+      "fp": 345,
+      "fn": 100,
+      "tn": 1536
+    },
+    {
+      "threshold": 0.2,
+      "flagged": 328,
+      "flagged_pct": 0.15428033866415805,
+      "precision": 0.3567073170731707,
+      "recall": 0.4775510204081633,
+      "accuracy": 0.8405456255879586,
+      "net_inr": 32332.499999999993,
+      "tp": 117,
+      "fp": 211,
+      "fn": 128,
+      "tn": 1670
+    },
+    {
+      "threshold": 0.25,
+      "flagged": 236,
+      "flagged_pct": 0.11100658513640639,
+      "precision": 0.4110169491525424,
+      "recall": 0.39591836734693875,
+      "accuracy": 0.8650047036688617,
+      "net_inr": 28422.499999999993,
+      "tp": 97,
+      "fp": 139,
+      "fn": 148,
+      "tn": 1742
+    },
+    {
+      "threshold": 0.3,
+      "flagged": 187,
+      "flagged_pct": 0.08795860771401694,
+      "precision": 0.4385026737967914,
+      "recall": 0.3346938775510204,
+      "accuracy": 0.8739416745061148,
+      "net_inr": 24590.0,
+      "tp": 82,
+      "fp": 105,
+      "fn": 163,
+      "tn": 1776
+    },
+    {
+      "threshold": 0.4,
+      "flagged": 99,
+      "flagged_pct": 0.04656632173095014,
+      "precision": 0.6060606060606061,
+      "recall": 0.24489795918367346,
+      "accuracy": 0.8946378174976481,
+      "net_inr": 19695.0,
+      "tp": 60,
+      "fp": 39,
+      "fn": 185,
+      "tn": 1842
+    },
+    {
+      "threshold": 0.5,
+      "flagged": 52,
+      "flagged_pct": 0.024459078080903106,
+      "precision": 0.6923076923076923,
+      "recall": 0.1469387755102041,
+      "accuracy": 0.894167450611477,
+      "net_inr": 12150.0,
+      "tp": 36,
+      "fp": 16,
+      "fn": 209,
+      "tn": 1865
+    }
+  ],
+  "error_taxonomy": {
+    "holdout": {
+      "n": 2126,
+      "return_rate": 0.11523988711194733,
+      "payment_mode": {
+        "cod": {
+          "n": 655.0,
+          "return_rate": 0.1984732824427481
+        },
+        "emi": {
+          "n": 268.0,
+          "return_rate": 0.11194029850746269
+        },
+        "prepaid_card": {
+          "n": 442.0,
+          "return_rate": 0.08144796380090498
+        },
+        "prepaid_upi": {
+          "n": 761.0,
+          "return_rate": 0.06438896189224705
+        }
+      },
+      "sales_channel": {
+        "app": {
+          "n": 706.0,
+          "return_rate": 0.12039660056657224
+        },
+        "marketplace": {
+          "n": 569.0,
+          "return_rate": 0.1282952548330404
+        },
+        "partner_outlet": {
+          "n": 269.0,
+          "return_rate": 0.09665427509293681
+        },
+        "web": {
+          "n": 582.0,
+          "return_rate": 0.10481099656357389
+        }
+      },
+      "family": {
+        "Air Fryer": {
+          "n": 300.0,
+          "return_rate": 0.10666666666666667
+        },
+        "Ceiling Fan": {
+          "n": 320.0,
+          "return_rate": 0.071875
+        },
+        "Induction Cooktop": {
+          "n": 284.0,
+          "return_rate": 0.1056338028169014
+        },
+        "Mixer Grinder": {
+          "n": 301.0,
+          "return_rate": 0.07641196013289037
+        },
+        "Robot Vacuum": {
+          "n": 336.0,
+          "return_rate": 0.18154761904761904
+        },
+        "Room Heater": {
+          "n": 316.0,
+          "return_rate": 0.13291139240506328
+        },
+        "Water Purifier": {
+          "n": 269.0,
+          "return_rate": 0.12639405204460966
+        }
+      },
+      "shield_member": {
+        "N": {
+          "n": 1648.0,
+          "return_rate": 0.0891990291262136
+        },
+        "Y": {
+          "n": 478.0,
+          "return_rate": 0.20502092050209206
+        }
+      },
+      "prior_returns_bucket": {
+        "0": {
+          "n": 1852.0,
+          "return_rate": 0.09341252699784017
+        },
+        "1": {
+          "n": 205.0,
+          "return_rate": 0.17073170731707318
+        },
+        "2": {
+          "n": 48.0,
+          "return_rate": 0.4583333333333333
+        },
+        "3+": {
+          "n": 21.0,
+          "return_rate": 0.7142857142857143
+        }
+      },
+      "value_quartile": {
+        "Q1": {
+          "n": 537.0,
+          "return_rate": 0.1042830540037244
+        },
+        "Q4": {
+          "n": 531.0,
+          "return_rate": 0.1544256120527307
+        },
+        "Q2": {
+          "n": 529.0,
+          "return_rate": 0.1001890359168242
+        },
+        "Q3": {
+          "n": 529.0,
+          "return_rate": 0.10207939508506617
+        }
+      }
+    },
+    "false_positives": {
+      "n": 504,
+      "mean_score": 0.22123778390865864,
+      "payment_mode_share": {
+        "cod": 0.5575396825396826,
+        "prepaid_upi": 0.21428571428571427,
+        "prepaid_card": 0.14087301587301587,
+        "emi": 0.0873015873015873
+      },
+      "sales_channel_share": {
+        "marketplace": 0.3630952380952381,
+        "app": 0.2996031746031746,
+        "web": 0.25992063492063494,
+        "partner_outlet": 0.07738095238095238
+      },
+      "family_share": {
+        "Robot Vacuum": 0.2876984126984127,
+        "Air Fryer": 0.17261904761904762,
+        "Water Purifier": 0.16666666666666666,
+        "Room Heater": 0.16071428571428573,
+        "Mixer Grinder": 0.07341269841269842,
+        "Ceiling Fan": 0.07142857142857142,
+        "Induction Cooktop": 0.06746031746031746
+      },
+      "shield_share": {
+        "N": 0.6150793650793651,
+        "Y": 0.38492063492063494
+      },
+      "prior_returns_bucket_share": {
+        "0": 0.7638888888888888,
+        "1": 0.18055555555555555,
+        "2": 0.04365079365079365,
+        "3+": 0.011904761904761904
+      },
+      "value_quartile_share": {
+        "Q4": 0.4087301587301587,
+        "Q3": 0.2400793650793651,
+        "Q1": 0.18452380952380953,
+        "Q2": 0.16666666666666666
+      },
+      "mean_prior_returns": 0.30753968253968256,
+      "mean_promised_days": 5.746031746031746,
+      "pct_cod": 0.5575396825396826,
+      "pct_shield": 0.38492063492063494,
+      "pct_prior_zero": 0.7638888888888888
+    },
+    "false_negatives": {
+      "n": 76,
+      "mean_score": 0.06786211466511335,
+      "payment_mode_share": {
+        "cod": 0.3157894736842105,
+        "prepaid_upi": 0.3157894736842105,
+        "emi": 0.18421052631578946,
+        "prepaid_card": 0.18421052631578946
+      },
+      "sales_channel_share": {
+        "app": 0.42105263157894735,
+        "web": 0.25,
+        "marketplace": 0.21052631578947367,
+        "partner_outlet": 0.11842105263157894
+      },
+      "family_share": {
+        "Robot Vacuum": 0.18421052631578946,
+        "Ceiling Fan": 0.17105263157894737,
+        "Induction Cooktop": 0.15789473684210525,
+        "Room Heater": 0.14473684210526316,
+        "Mixer Grinder": 0.14473684210526316,
+        "Water Purifier": 0.13157894736842105,
+        "Air Fryer": 0.06578947368421052
+      },
+      "shield_share": {
+        "N": 0.8421052631578947,
+        "Y": 0.15789473684210525
+      },
+      "prior_returns_bucket_share": {
+        "0": 0.9736842105263158,
+        "1": 0.02631578947368421
+      },
+      "value_quartile_share": {
+        "Q2": 0.3026315789473684,
+        "Q4": 0.27631578947368424,
+        "Q1": 0.25,
+        "Q3": 0.17105263157894737
+      },
+      "mean_prior_returns": 0.02631578947368421,
+      "mean_promised_days": 5.092105263157895,
+      "pct_cod": 0.3157894736842105,
+      "pct_shield": 0.15789473684210525,
+      "pct_prior_zero": 0.9736842105263158
+    },
+    "example_fps": [
+      {
+        "order_id": "KO2609200",
+        "score": 0.7732501392020745,
+        "returned": 0
+      },
+      {
+        "order_id": "KO2609532",
+        "score": 0.7501456758810867,
+        "returned": 0
+      },
+      {
+        "order_id": "KO2608725",
+        "score": 0.6630345274118102,
+        "returned": 0
+      }
+    ],
+    "example_fns": [
+      {
+        "order_id": "KO2610330",
+        "score": 0.11072595235694524,
+        "returned": 1
+      },
+      {
+        "order_id": "KO2609717",
+        "score": 0.10922115892528586,
+        "returned": 1
+      },
+      {
+        "order_id": "KO2608803",
+        "score": 0.10822963690385495,
+        "returned": 1
+      }
+    ],
+    "narrative": [
+      "False negatives are enriched for first-time or zero-prior-return buyers (97% of misses vs 87% of the holdout): the model has little personal history to latch onto, so a prepaid first-time buyer who returns for a reason that never appears in the data slips through.",
+      "Shield members are less common among misses (15.8% of FNs vs 22.5% of the holdout), so many of the returns it fails to flag are ordinary non-Shield orders.",
+      "False positives over-index on COD (56% vs 31% holdout): cash-on-delivery is a strong signal, so some COD orders that would have been fine still get a confirmation call.",
+      "Over-flags lean Shield (38% vs 22% holdout): free returns for members raise their historical rate, so loyal buyers get called more often than the Service Desk would like."
+    ]
+  },
+  "call_prevention_sensitivity": {
+    "0.2": {
+      "call_prevent": 0.2,
+      "net_holdout": 8585.000000000007,
+      "monthly_700": 2826.66980244591,
+      "annual_700": 33920.03762935092
+    },
+    "0.35": {
+      "call_prevent": 0.35,
+      "net_holdout": 37737.5,
+      "monthly_700": 12425.329256820321,
+      "annual_700": 149103.95108184387
+    },
+    "0.5": {
+      "call_prevent": 0.5,
+      "net_holdout": 66890.0,
+      "monthly_700": 22023.988711194732,
+      "annual_700": 264287.8645343368
+    }
+  }
+}

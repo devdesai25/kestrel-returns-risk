@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kestrel — Pre-dispatch return risk</title>
+  <style>
+    :root {
+      --ink: #1a2332;
+      --muted: #5c6b7a;
+      --line: #d5dde6;
+      --bg: #f3f6f8;
+      --panel: #ffffff;
+      --accent: #0b6e4f;
+      --accent-soft: #e6f4ef;
+      --warn: #b45309;
+      --warn-soft: #fff7ed;
+      --danger: #9f1239;
+      --danger-soft: #fff1f2;
+      --ship: #0b6e4f;
+      --font: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 10% -10%, #d9ebe3 0%, transparent 55%),
+        radial-gradient(ellipse 60% 40% at 100% 0%, #e8eef5 0%, transparent 50%),
+        var(--bg);
+      min-height: 100vh;
+    }
+    header {
+      padding: 1.25rem 1.5rem 0.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    header .brand {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+    }
+    header p {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 36rem;
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 2.5rem;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 1.1rem 1.2rem 1.3rem;
+    }
+    .panel h2 {
+      margin: 0 0 0.85rem;
+      font-size: 1rem;
+      font-weight: 650;
+    }
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem 0.75rem;
+    }
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    label.span2 { grid-column: 1 / -1; }
+    input, select, textarea {
+      font: inherit;
+      font-weight: 400;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0.45rem 0.55rem;
+      background: #fafbfc;
+    }
+    textarea { min-height: 2.6rem; resize: vertical; }
+    .actions {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 0.6rem;
+      margin-top: 0.35rem;
+    }
+    button {
+      font: inherit;
+      font-weight: 650;
+      border: none;
+      border-radius: 6px;
+      padding: 0.55rem 1rem;
+      cursor: pointer;
+    }
+    button.primary { background: var(--accent); color: #fff; }
+    button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+    button:disabled { opacity: 0.55; cursor: wait; }
+    .score-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      min-height: 280px;
+    }
+    .score-big {
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .score-big span { font-size: 1.1rem; color: var(--muted); font-weight: 600; }
+    .band {
+      display: inline-block;
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      width: fit-content;
+    }
+    .band.ship { background: var(--accent-soft); color: var(--ship); }
+    .band.call { background: var(--warn-soft); color: var(--warn); }
+    .band.hold { background: var(--danger-soft); color: var(--danger); }
+    .decision { margin: 0; line-height: 1.45; }
+    .rupees {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .rupees div {
+      background: var(--bg);
+      border-radius: 6px;
+      padding: 0.55rem 0.65rem;
+    }
+    .rupees strong { display: block; font-size: 1.05rem; margin-top: 0.15rem; }
+    .reasons { margin: 0; padding-left: 1.1rem; color: var(--ink); }
+    .reasons li { margin: 0.35rem 0; line-height: 1.4; }
+    .placeholder { color: var(--muted); }
+    .error {
+      color: var(--danger);
+      background: var(--danger-soft);
+      padding: 0.6rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    footer {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem 2rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">Kestrel Home</div>
+    <p>Pre-dispatch return risk — flag orders for a confirmation call before they leave the warehouse.</p>
+  </header>
+  <main>
+    <section class="panel">
+      <h2>Order at dispatch</h2>
+      <form id="order-form">
+        <label>Order ID<input name="order_id" required /></label>
+        <label>Placed at<input name="order_placed_at" required /></label>
+        <label>Customer ID<input name="customer_id" required /></label>
+        <label>SKU<input name="sku" required /></label>
+        <label>Channel
+          <select name="sales_channel">
+            <option>app</option><option>web</option><option>marketplace</option><option>partner_outlet</option>
+          </select>
+        </label>
+        <label>Payment
+          <select name="payment_mode">
+            <option>prepaid_upi</option><option>prepaid_card</option><option>cod</option><option>emi</option>
+          </select>
+        </label>
+        <label>Discount %<input name="discount_pct" type="number" step="any" required /></label>
+        <label>Quantity<input name="qty" type="number" step="1" required /></label>
+        <label>Order value (₹)<input name="order_value_inr" type="number" step="any" required /></label>
+        <label>Promised days<input name="promised_delivery_days" type="number" step="1" required /></label>
+        <label>Pincode<input name="delivery_pincode" required /></label>
+        <label>Gift
+          <select name="is_gift"><option>N</option><option>Y</option></select>
+        </label>
+        <label>Prior orders<input name="customer_prior_orders" type="number" step="1" required /></label>
+        <label>Prior returns<input name="customer_prior_returns" type="number" step="1" required /></label>
+        <label class="span2">Delivery note<textarea name="delivery_note"></textarea></label>
+        <div class="actions">
+          <button type="submit" class="primary" id="score-btn">Score order</button>
+          <button type="button" class="ghost" id="reload-btn">Load sample</button>
+        </div>
+      </form>
+    </section>
+    <section class="panel">
+      <h2>Risk result</h2>
+      <div class="score-wrap" id="result">
+        <p class="placeholder">Submit an order to see the score, recommended action, and why.</p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <strong>What this is not:</strong> not a hold-everything policy, not a 95% accuracy guarantee,
+    and not a substitute for the confirmation-call pilot. Scores are probabilities from a logistic
+    regression trained on cleaned historical orders; the operating threshold is the call break-even (~11%).
+  </footer>
+  <script>
+    const form = document.getElementById("order-form");
+    const result = document.getElementById("result");
+    const scoreBtn = document.getElementById("score-btn");
+
+    function bandClass(band) {
+      if (!band) return "";
+      if (band.toLowerCase().startsWith("ship")) return "ship";
+      if (band.toLowerCase().startsWith("call")) return "call";
+      return "hold";
+    }
+
+    function fillForm(data) {
+      for (const [k, v] of Object.entries(data)) {
+        const el = form.elements.namedItem(k);
+        if (!el) continue;
+        el.value = v == null ? "" : v;
+      }
+    }
+
+    async function loadSample() {
+      const res = await fetch("/sample");
+      const data = await res.json();
+      fillForm(data);
+    }
+
+    function render(data) {
+      const score100 = Math.round(data.score * 100);
+      const reasons = (data.reasons || [])
+        .map(r => `<li>${r.text}${r.points ? ` <span style="color:#5c6b7a">(${r.points > 0 ? "+" : ""}${r.points} pts)</span>` : ""}</li>`)
+        .join("");
+      result.innerHTML = `
+        <div class="score-big">${score100}<span> / 100</span></div>
+        <div class="band ${bandClass(data.band)}">${data.band}</div>
+        <p class="decision">${data.decision}</p>
+        <div class="rupees">
+          <div>Expected saving if return prevented<strong>₹ ${Number(data.expected_saving_inr).toFixed(0)}</strong></div>
+          <div>Confirmation call cost<strong>₹ ${Number(data.expected_call_cost_inr).toFixed(0)}</strong></div>
+        </div>
+        <div>
+          <strong style="font-size:0.85rem;color:#5c6b7a">Why this score</strong>
+          <ul class="reasons">${reasons || "<li>No strong drivers vs the typical order.</li>"}</ul>
+        </div>
+      `;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      scoreBtn.disabled = true;
+      const fd = new FormData(form);
+      const body = {};
+      fd.forEach((v, k) => {
+        if (["discount_pct","qty","order_value_inr","promised_delivery_days","customer_prior_orders","customer_prior_returns"].includes(k)) {
+          body[k] = v === "" ? null : Number(v);
+        } else {
+          body[k] = v;
+        }
+      });
+      try {
+        const res = await fetch("/score", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          result.innerHTML = `<div class="error">${data.error || "Scoring failed"}</div>`;
+        } else {
+          render(data);
+        }
+      } catch (err) {
+        result.innerHTML = `<div class="error">${err.message}</div>`;
+      } finally {
+        scoreBtn.disabled = false;
+      }
+    });
+
+    document.getElementById("reload-btn").addEventListener("click", () => loadSample().catch(console.error));
+    loadSample().catch(console.error);
+  </script>
+</body>
+</html>

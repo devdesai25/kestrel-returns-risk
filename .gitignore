@@ -1,0 +1,21 @@
+# Client data — ops-policy §10 forbids publishing
+data/*.csv
+data/*.pdf
+data/*.txt
+!data/README.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.pytest_cache/
+.pytest_cache/**
+*.egg-info/
+.mypy_cache/
+
+# Local junk
+.DS_Store
+*.log
+.ipynb_checkpoints/
